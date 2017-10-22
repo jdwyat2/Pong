@@ -194,6 +194,21 @@ PlayerScore.prototype.update = function() {
     }
 };
 
+EnemyScore.prototype.render = function() {
+    context.font = "40px Comic Sans";
+    context.fillStyle = "#FFFFFF";
+    context.fillText(this.enemyScore, 10, 30);
+};
+
+PlayerScore.prototype.render = function() {
+    context.font = "40px Comic Sans";
+    context.fillStyle = "#FFFFFF";
+    context.fillText(this.playerScore, 10, 585);
+};
+
+
+
+
 var keysDown = {};
 
 window.addEventListener("keydown", function(event) {
