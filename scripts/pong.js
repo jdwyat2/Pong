@@ -1,7 +1,7 @@
 var animate = window.requestAnimationFrame || 
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
-    function(callback) { window.setTimeout(callback, 1000/60) };
+    function(callback) { window.setTimeout(callback, 100/60) };
 
 var canvas = document.createElement('canvas');
 var width = 400;
@@ -15,15 +15,18 @@ window.onload = function(){
     animate(step);
 };
 
-function step () {
+var step = function() {
     update();
     render();
     animate(step);
-}
+};
 
 var update = function(){
     player.update();
-    ball.update(player.paddle, computer.paddle);
+    computer.update(ball);
+    ball.update(player.paddle, computer.paddle, enemyScore, playerScore);
+    enemyScore.update();
+    playerScore.update();
 };
 
 Player.prototype.update = function(){
@@ -41,7 +44,7 @@ Player.prototype.update = function(){
 
 Computer.prototype.update = function(ball){
     var xCoord = ball.x;
-    var diff = ((this.paddle.x + (this.paddle.width /2 )) - xCoord);
+    var diff = -1 * (((this.paddle.x + (this.paddle.width /2 )) - xCoord));
     if ( diff < 0 && diff < -4 ) {
         diff = -5;
     } else if(diff > 0 && diff >4){
@@ -72,15 +75,15 @@ Paddle.prototype.move = function(x,y) {
 Ball.prototype.update = function(computerPaddle, playerPaddle){
     this.x += this.x_speed;
     this.y += this.y_speed;
-    var topX = this.x -5;
-    var topY = this.y-5;
-    var bottomX = this.x+5;
-    var bottomY = this.y+5;
+    var topX = this.x - 5;
+    var topY = this.y - 5;
+    var bottomX = this.x + 5;
+    var bottomY = this.y + 5;
     
     if(this.x - 5 < 0){
         this.x = 5;
         this.x_speed = this.x_speed * -1;
-    } else if (this.x +5 > 400) {
+    } else if (this.x + 5 > 400) {
         this.x = 395;
         this.x_speed = this.x_speed * -1;
     }
@@ -96,6 +99,8 @@ Ball.prototype.update = function(computerPaddle, playerPaddle){
         if(this.y > 600) {
             enemyScore ++;
         }
+        this.x = 200;
+        this.y = 300;
     }
     
     if(topY > 300){
@@ -119,7 +124,7 @@ var ball = new Ball(100,100);
 var enemyScore = new EnemyScore();
 var playerScore = new PlayerScore();
 
-var render = function (){
+var render = function() {
   context.fillStyle = "#FF2D2D";
   context.fillRect(0,0,width,height);
   player.render();
@@ -206,16 +211,13 @@ PlayerScore.prototype.render = function() {
     context.fillText(this.playerScore, 10, 585);
 };
 
-
-
-
 var keysDown = {};
 
 window.addEventListener("keydown", function(event) {
     keysDown[event.keyCode] = true;
 });
 
-window.addEventListener("keyUp", function(event) {
+window.addEventListener("keyup", function(event) {
     delete keysDown[event.keyCode];
 });
 
