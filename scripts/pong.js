@@ -52,6 +52,37 @@ Paddle.prototype.move = function(x,y) {
     }
 };
 
+Ball.prototype.update = function(computerPaddle, playerPaddle){
+    this.x += this.x_speed;
+    this.y += this.y_speed;
+    var topX = this.x -5;
+    var topY = this.y-5;
+    var bottomX = this.x+5;
+    var bottomY = this.y+5;
+    
+    if(this.x - 5 < 0){
+        this.x = 5;
+        this.x_speed = this.x_speed * -1;
+    } else if (this.x +5 > 400) {
+        this.x = 395;
+        this.x_speed = this.x_speed * -1;
+    }
+    
+    if(topY > 300){
+        if(topY < (computerPaddle.y + computerPaddle.height) && bottomY > computerPaddle.y && topX < (computerPaddle.x + computerPaddle.width) && bottomX > computerPaddle.x){
+            this.y_speed = -3;
+            this.x_speed += (computerPaddle.x_speed / 2);
+            this.y += this.y_speed;
+        }
+    } else {
+        if (topY < (playerPaddle.y + playerPaddle.height) && bottomY > playerPaddle.y && topX < (playerPaddle.x + playerPaddle.width) && bottomX > playerPaddle.x){
+            this.y_speed = 3;
+            this.x_speed += (playerPaddle.x_speed / 2);
+            this.y += this.y_speed;
+        }
+    }
+};
+
 var player = new Player();
 var computer = new Computer();
 var ball = new Ball(100,100);
