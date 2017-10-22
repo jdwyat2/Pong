@@ -23,6 +23,7 @@ function step () {
 
 var update = function(){
     player.update();
+    ball.update(player.paddle, computer.paddle);
 };
 
 Player.prototype.update = function(){
@@ -35,6 +36,22 @@ Player.prototype.update = function(){
         } else {
             this.paddle.move(0,0);
         }
+    }
+};
+
+Computer.prototype.update = function(ball){
+    var xCoord = ball.x;
+    var diff = ((this.paddle.x + (this.paddle.width /2 )) - xCoord);
+    if ( diff < 0 && diff < -4 ) {
+        diff = -5;
+    } else if(diff > 0 && diff >4){
+        diff = 5;
+    } 
+    this.paddle.move(diff,0);
+    if(this.paddle.x < 0) {
+        this.paddle.x = 0;
+    } else if (this.paddle.x + this.paddle.width > 400){
+        this.paddle.x = 400 - this.paddle.width;
     }
 };
 
@@ -68,6 +85,19 @@ Ball.prototype.update = function(computerPaddle, playerPaddle){
         this.x_speed = this.x_speed * -1;
     }
     
+    if (this.y <0 || this.y > 600){
+        this.x_speed = 0;
+        this.y_speed = 3;
+        
+        if(this.y < 0){
+            playerScore ++;
+        }
+        
+        if(this.y > 600) {
+            enemyScore ++;
+        }
+    }
+    
     if(topY > 300){
         if(topY < (computerPaddle.y + computerPaddle.height) && bottomY > computerPaddle.y && topX < (computerPaddle.x + computerPaddle.width) && bottomX > computerPaddle.x){
             this.y_speed = -3;
@@ -86,6 +116,8 @@ Ball.prototype.update = function(computerPaddle, playerPaddle){
 var player = new Player();
 var computer = new Computer();
 var ball = new Ball(100,100);
+var enemyScore = new EnemyScore();
+var playerScore = new PlayerScore();
 
 var render = function (){
   context.fillStyle = "#FF2D2D";
@@ -93,6 +125,8 @@ var render = function (){
   player.render();
   computer.render();
   ball.render();
+  enemyScore.render();
+  playerScore.render();
 };
 
 function Ball(x,y){
@@ -138,6 +172,26 @@ Player.prototype.render = function(){
 Computer.prototype.render = function(){
     context.fillStyle = "#BBBBBB";
     this.paddle.render();
+};
+
+function EnemyScore() {
+    this.enemyScore = 0;
+}
+
+function PlayerScore() {
+    this.playerScore = 0;
+}
+
+EnemyScore.prototype.update = function () {
+    if (this.enemyScore  === 10){
+        alert("The enemy has won... All is lost!!");
+    }
+};
+
+PlayerScore.prototype.update = function() {
+    if(this.playerScore === 10){
+        alert("You won! Prepare to asert your will over your new dominion!!");
+    }
 };
 
 var keysDown = {};
