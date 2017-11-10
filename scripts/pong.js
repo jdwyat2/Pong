@@ -191,14 +191,14 @@ function PlayerScore() {
 }
 
 EnemyScore.prototype.update = function() {
-  if(this.enemyScore === 21) {
+  if(this.enemyScore === 11) {
     alert("Computer Won!");
     location.reload();
   }
 }
 
 PlayerScore.prototype.update = function() {
-  if(this.playerScore === 21) {
+  if(this.playerScore === 11) {
     alert("You Won!");
     location.reload();
   }
